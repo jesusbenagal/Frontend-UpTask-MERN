@@ -56,7 +56,7 @@ const FormularioProyecto = () => {
         />
       </div>
 
-      <div>
+      <div className="mt-2">
         <label
           className="text-gray-700 uppercase font-bold text-sm"
           htmlFor="descripcion"
@@ -72,7 +72,7 @@ const FormularioProyecto = () => {
         />
       </div>
 
-      <div>
+      <div className="mt-2">
         <label
           className="text-gray-700 uppercase font-bold text-sm"
           htmlFor="fecha-entrega"
@@ -89,7 +89,7 @@ const FormularioProyecto = () => {
         />
       </div>
 
-      <div>
+      <div className="mt-2">
         <label
           className="text-gray-700 uppercase font-bold text-sm"
           htmlFor="cliente"
@@ -109,7 +109,7 @@ const FormularioProyecto = () => {
       <input
         type="submit"
         value="Crear Proyecto"
-        className="bg-sky-600 w-full p-3 mt-2 uppercase font-bold text-white rounded cursor-pointer hover:bg-sky-700 transition-colors"
+        className="bg-sky-600 w-full p-3 mt-3 uppercase font-bold text-white rounded cursor-pointer hover:bg-sky-700 transition-colors"
       />
     </form>
   );
