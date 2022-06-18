@@ -1,14 +1,27 @@
-import Reac, { useState } from "react";
+import { useState, useEffect } from "react";
 import useProyectos from "../hooks/useProyectos";
 import Alerta from "../components/Alerta";
+import { useParams } from "react-router-dom";
 
 const FormularioProyecto = () => {
+  const [id, setId] = useState(null);
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [fechaEntrega, setFechaEntrega] = useState("");
   const [cliente, setCliente] = useState("");
 
-  const { showAlert, alerta, submitProyecto } = useProyectos();
+  const params = useParams();
+  const { showAlert, alerta, submitProyecto, proyecto } = useProyectos();
+
+  useEffect(() => {
+    if (params.id) {
+      setId(proyecto._id);
+      setNombre(proyecto.nombre);
+      setDescripcion(proyecto.descripcion);
+      setFechaEntrega(proyecto.fechaEntrega?.split("T")[0]);
+      setCliente(proyecto.cliente);
+    }
+  }, [params]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,8 +35,9 @@ const FormularioProyecto = () => {
       return;
     }
 
-    await submitProyecto({ nombre, descripcion, fechaEntrega, cliente });
+    await submitProyecto({ id, nombre, descripcion, fechaEntrega, cliente });
 
+    setId(null);
     setNombre("");
     setDescripcion("");
     setFechaEntrega("");
@@ -56,7 +70,7 @@ const FormularioProyecto = () => {
         />
       </div>
 
-      <div>
+      <div className="mt-2">
         <label
           className="text-gray-700 uppercase font-bold text-sm"
           htmlFor="descripcion"
@@ -72,7 +86,7 @@ const FormularioProyecto = () => {
         />
       </div>
 
-      <div>
+      <div className="mt-2">
         <label
           className="text-gray-700 uppercase font-bold text-sm"
           htmlFor="fecha-entrega"
@@ -89,7 +103,7 @@ const FormularioProyecto = () => {
         />
       </div>
 
-      <div>
+      <div className="mt-2">
         <label
           className="text-gray-700 uppercase font-bold text-sm"
           htmlFor="cliente"
@@ -108,8 +122,8 @@ const FormularioProyecto = () => {
 
       <input
         type="submit"
-        value="Crear Proyecto"
-        className="bg-sky-600 w-full p-3 mt-2 uppercase font-bold text-white rounded cursor-pointer hover:bg-sky-700 transition-colors"
+        value={id ? "Actualizar Proyecto" : "Crear Proyecto"}
+        className="bg-sky-600 w-full p-3 mt-3 uppercase font-bold text-white rounded cursor-pointer hover:bg-sky-700 transition-colors"
       />
     </form>
   );
