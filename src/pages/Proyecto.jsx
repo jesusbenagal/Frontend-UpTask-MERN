@@ -1,12 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import useProyectos from "../hooks/useProyectos";
 import ModalFormularioTarea from "../components/ModalFormularioTarea";
 
 const Proyecto = () => {
   const params = useParams();
-
   const { obtenerProyecto, proyecto, cargando } = useProyectos();
+
+  const [modal, setModal] = useState(false);
 
   useEffect(() => {
     obtenerProyecto(params.id);
@@ -44,6 +45,7 @@ const Proyecto = () => {
         </div>
       </div>
       <button
+        onClick={() => setModal(true)}
         type="button"
         className="text-sm px-5 py-3 w-full md:w-auto rounded-lg uppercase font-bold bg-sky-400 text-white text-center mt-5 flex gap-2 items-center justify-center"
       >
@@ -62,7 +64,7 @@ const Proyecto = () => {
         Nueva Tarea
       </button>
 
-      <ModalFormularioTarea />
+      <ModalFormularioTarea modal={modal} setModal={setModal} />
     </>
   );
 };
