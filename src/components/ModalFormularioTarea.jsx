@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 const PRIORIDAD = ["Baja", "Media", "Alta"];
 
 const ModalFormularioTarea = () => {
+  const [id, setId] = useState("");
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [prioridad, setPrioridad] = useState("");
@@ -20,7 +21,24 @@ const ModalFormularioTarea = () => {
     showAlert,
     alerta,
     submitTarea,
+    tarea,
   } = useProyectos();
+
+  useEffect(() => {
+    if (tarea?._id) {
+      setId(tarea._id);
+      setNombre(tarea.nombre);
+      setDescripcion(tarea.descripcion);
+      setPrioridad(tarea.prioridad);
+      setFechaEntrega(tarea.fechaEntrega.split("T")[0]);
+      return;
+    }
+    setId("");
+    setNombre("");
+    setDescripcion("");
+    setPrioridad("");
+    setFechaEntrega("");
+  }, [tarea]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +52,7 @@ const ModalFormularioTarea = () => {
     }
 
     await submitTarea({
+      id,
       nombre,
       descripcion,
       fechaEntrega,
@@ -115,7 +134,7 @@ const ModalFormularioTarea = () => {
                     as="h3"
                     className="text-lg leading-6 font-bold text-gray-900"
                   >
-                    Crear Tarea
+                    {id ? "Editar tarea" : "Crear tarea"}
                   </Dialog.Title>
                   {msg && <Alerta alerta={alerta} />}
                   <form onSubmit={handleSubmit} className="my-10">
@@ -189,7 +208,7 @@ const ModalFormularioTarea = () => {
                     <input
                       type="submit"
                       className="bg-sky-600 hover:bg-sky-700 w-full p-3 text-white uppercase font-bold cursor-pointer transition-colors rounded text-sm"
-                      value="Crear Tarea"
+                      value={id ? "Guardar Cambios" : "Crear Tarea"}
                     />
                   </form>
                 </div>
