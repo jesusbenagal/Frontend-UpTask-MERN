@@ -52,6 +52,7 @@ const ModalFormularioTarea = () => {
     }
 
     await submitTarea({
+      id,
       nombre,
       descripcion,
       fechaEntrega,
