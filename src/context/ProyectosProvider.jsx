@@ -136,7 +136,7 @@ const ProyectosProvider = ({ children }) => {
       setProyecto(data);
     } catch (error) {
       showAlert({
-        msg: response.data.msg,
+        msg: error.response.data.msg,
         error: true,
       });
     } finally {
