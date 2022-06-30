@@ -401,6 +401,13 @@ const ProyectosProvider = ({ children }) => {
         {},
         config
       );
+      const proyectoActualizado = { ...proyecto };
+      proyectoActualizado.tareas = proyecto.tareas.map((tareaState) =>
+        tareaState._id === data._id ? data : tareaState
+      );
+      setProyecto(proyectoActualizado);
+      setTarea({});
+      showAlert({});
     } catch (error) {
       console.log(error);
     }
