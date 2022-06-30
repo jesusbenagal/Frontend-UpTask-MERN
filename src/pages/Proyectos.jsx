@@ -9,9 +9,16 @@ let socket;
 const Proyectos = () => {
   const { proyectos, alerta } = useProyectos();
 
-  useEffect(() => {
-    socket = io(import.meta.env.VITE_BACKEND_URL);
-  }, []);
+  //TEST SOCKET IO
+  // useEffect(() => {
+  //   socket = io(import.meta.env.VITE_BACKEND_URL);
+  //   Enviar elementos desde el front
+  //   socket.emit("prueba", proyectos);
+  //   Recibir elementos desde el backend
+  //   socket.on("respuesta", (persona) => {
+  //     console.log("Desde el frontend", persona);
+  //   });
+  // });
 
   const { msg } = alerta;
   return (
