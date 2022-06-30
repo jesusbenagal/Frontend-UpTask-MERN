@@ -135,6 +135,7 @@ const ProyectosProvider = ({ children }) => {
       const { data } = await clienteAxios.get(`/proyectos/${id}`, config);
       setProyecto(data);
     } catch (error) {
+      navigate("/proyectos");
       showAlert({
         msg: error.response.data.msg,
         error: true,
