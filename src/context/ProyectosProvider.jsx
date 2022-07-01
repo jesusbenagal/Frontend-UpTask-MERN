@@ -1,6 +1,9 @@
 import { useState, useEffect, createContext } from "react";
 import clienteAxios from "../config/clienteAxios";
 import { useNavigate } from "react-router-dom";
+import io from "socket.io-client";
+
+let socket;
 
 const ProyectosContext = createContext();
 
@@ -40,6 +43,10 @@ const ProyectosProvider = ({ children }) => {
     };
 
     obtenerProyectos();
+  }, []);
+
+  useEffect(() => {
+    socket = io(import.meta.env.VITE_BACKEND_URL);
   }, []);
 
   const showAlert = (alerta) => {
@@ -203,12 +210,11 @@ const ProyectosProvider = ({ children }) => {
       };
 
       const { data } = await clienteAxios.post("/tareas", tarea, config);
-      //Agregar la tarea al State
-      const proyectoActualizado = { ...proyecto };
-      proyectoActualizado.tareas = [...proyecto.tareas, data];
-      setProyecto(proyectoActualizado);
       setAlerta({});
       setModalFormularioTarea(false);
+
+      //SOCKETIO
+      socket.emit("nueva tarea", data);
     } catch (error) {
       console.log(error);
     }
@@ -231,14 +237,11 @@ const ProyectosProvider = ({ children }) => {
         tarea,
         config
       );
-      //Set State
-      const tareasActualizadas = proyecto.tareas.map((tareaState) =>
-        tareaState._id === data._id ? data : tareaState
-      );
-      setProyecto({ ...proyecto, tareas: tareasActualizadas });
       //Set Alert
       setAlerta({});
       setModalFormularioTarea(false);
+      //SOCKETIO
+      socket.emit("actualizar tarea", data);
     } catch (error) {
       console.log(error);
     }
@@ -275,12 +278,12 @@ const ProyectosProvider = ({ children }) => {
         error: false,
       });
 
-      const proyectoActualizado = { ...proyecto };
-      proyectoActualizado.tareas = proyecto.tareas.filter(
-        (tareaState) => tareaState._id !== tarea._id
-      );
-      setProyecto(proyectoActualizado);
       setModalEliminarTarea(false);
+
+      //SOCKET IO
+      socket.emit("eliminar tarea", tarea);
+
+      setTarea({});
       setTimeout(() => {
         setAlerta({});
       }, 3000);
@@ -403,13 +406,11 @@ const ProyectosProvider = ({ children }) => {
         {},
         config
       );
-      const proyectoActualizado = { ...proyecto };
-      proyectoActualizado.tareas = proyecto.tareas.map((tareaState) =>
-        tareaState._id === data._id ? data : tareaState
-      );
-      setProyecto(proyectoActualizado);
       setTarea({});
       showAlert({});
+
+      //SOCKETIO
+      socket.emit("cambiar estado", data);
     } catch (error) {
       console.log(error);
     }
@@ -417,6 +418,38 @@ const ProyectosProvider = ({ children }) => {
 
   const handleBuscador = () => {
     setBuscador(!buscador);
+  };
+
+  //Socket IO
+  const submitTareasProyecto = (tarea) => {
+    //Agregar la tarea al State
+    const proyectoActualizado = { ...proyecto };
+    proyectoActualizado.tareas = [...proyectoActualizado.tareas, tarea];
+    setProyecto(proyectoActualizado);
+  };
+
+  const eliminarTareaProyecto = (tarea) => {
+    const proyectoActualizado = { ...proyecto };
+    proyectoActualizado.tareas = proyecto.tareas.filter(
+      (tareaState) => tareaState._id !== tarea._id
+    );
+    setProyecto(proyectoActualizado);
+  };
+
+  const actualizarTareaProyecto = (tarea) => {
+    const proyectoActualizado = { ...proyecto };
+    proyectoActualizado.tareas = proyectoActualizado.tareas.map((tareaState) =>
+      tareaState._id === tarea._id ? tarea : tareaState
+    );
+    setProyecto(proyectoActualizado);
+  };
+
+  const cambiarEstadoTarea = (tarea) => {
+    const proyectoActualizado = { ...proyecto };
+    proyectoActualizado.tareas = proyectoActualizado.tareas.map((tareaState) =>
+      tareaState._id === tarea._id ? tarea : tareaState
+    );
+    setProyecto(proyectoActualizado);
   };
 
   return (
@@ -447,6 +480,10 @@ const ProyectosProvider = ({ children }) => {
         completarTarea,
         buscador,
         handleBuscador,
+        submitTareasProyecto,
+        eliminarTareaProyecto,
+        actualizarTareaProyecto,
+        cambiarEstadoTarea,
       }}
     >
       {children}
